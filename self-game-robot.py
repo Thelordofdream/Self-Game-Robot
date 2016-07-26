@@ -17,13 +17,6 @@ class player:
         self.status = 1
 
 
-def majorityRate(classList):
-    classCount = {}
-    for vote in classList:
-        pass
-    return
-
-
 def splitDataSet(dataSet, value):
     retDataSet = []
     for featVec in dataSet:
