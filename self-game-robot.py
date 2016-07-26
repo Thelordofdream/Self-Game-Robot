@@ -74,7 +74,7 @@ player7 = player()
 players = [player1, player2, player3, player4, player5, player6, player7]
 each_round = [0, 0, 0, 0, 0, 0, 0]
 iteration = 0
-num = 10
+num = 2
 round_history = [[0] * 41 for i in range(people * num)]
 
 while iteration < num:
@@ -86,8 +86,19 @@ while iteration < num:
         print "*** Round %d ***" % (count + 1)
         Max = -2
         # 出招
-        for i in range(3):
+        for i in range(people):
             if players[i].status == 1:
+                if iteration >= 1:
+                    history = [example for example in round_history[i + iteration * people][:count]]
+                    value = 0
+                    dict = mytree
+                    predict = history[:]
+                    predict.append(0)
+                    for j in range(count + 1):
+                        value = predict[j]
+                        key = dict.keys()[0]
+                        dict = dict[key][value]
+                    print key
                 if players[i].Bullet == 0:
                     each_round[i] = random.randint(-1, 0)
                 elif players[i].Bullet == 1:
@@ -118,10 +129,11 @@ while iteration < num:
                     losers += 1
         if losers == (people - 1):
             for i in range(people):
+                players[i].Rounds += 1
                 if players[i].status == 1:
                     print "Player %d win" % (i + 1)
                     result[i] = 1
-                    print result
+                    players[i].Vtimes += 1
                 round_history[i + iteration * people][-1] = str(result[i])
             break
         count += 1
@@ -129,7 +141,7 @@ while iteration < num:
         players[i].Bullet = 0
         players[i].status = 1
     iteration += 1
+    mytree = createTree(round_history)
+    print round_history[0]
 
-
-mytree = createTree(round_history)
 createPlot(mytree)
