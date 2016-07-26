@@ -1,6 +1,8 @@
 # coding=utf-8
 import random
 import numpy as np
+from treePlotter import createPlot
+
 
 # 吸 = 积累一颗子弹 0
 # Biu = 一级伤害,消耗一颗子弹 1
@@ -16,39 +18,89 @@ class player:
         self.History = []
         self.status = 1
 
+
+def majorityRate(classList):
+    classCount = {}
+    for vote in classList:
+        pass
+    return
+
+
+def splitDataSet(dataSet, value):
+    retDataSet = []
+    for featVec in dataSet:
+        if featVec[0] == value:
+            retDataSet.append(featVec[1:])
+    return retDataSet
+
+
+def get_rate(dataSet):
+    sum = 0
+    count = 0
+    for featVec in dataSet:
+        sum += 1
+        if featVec[-1] == '1':
+            count += 1
+    rate = float(count) / float(sum)
+    return round(rate, 2)
+
+
+def createTree(dataSet):
+    Rate = str(get_rate(dataSet))
+    flag = 0
+    for example in dataSet:
+        for i in example[:-1]:
+            if i != 0:
+                flag = 1
+    if len(dataSet[0]) == 1 or flag == 0:
+        return Rate
+    myTree = {Rate: {}}
+    featValues = [example[0] for example in dataSet]
+    uniqueVals = set(featValues)
+    for value in uniqueVals:
+        myTree[Rate][value] = createTree(splitDataSet(dataSet, value))
+    return myTree
+
+
 moves = ["挡挡", "挡", "吸", "Biu", "BiuBiu"]
+people = 7
 player1 = player()
 player2 = player()
 player3 = player()
-players = [player1, player2, player3]
-each_round = [0, 0, 0]
+player4 = player()
+player5 = player()
+player6 = player()
+player7 = player()
+players = [player1, player2, player3, player4, player5, player6, player7]
+each_round = [0, 0, 0, 0, 0, 0, 0]
 iteration = 0
 num = 10
-round_history = [[0] * 31 for i in range(3 * num)]
+round_history = [[0] * 41 for i in range(people * num)]
 
 while iteration < num:
     print "*** Iteration %d ***" % (iteration + 1)
     count = 0
     losers = 0
-    result = [0, 0, 0]
+    result = [0, 0, 0, 0, 0, 0, 0]
     while True:
         print "*** Round %d ***" % (count + 1)
         Max = -2
         # 出招
         for i in range(3):
-            if players[i].Bullet == 0:
-                each_round[i] = random.randint(-1, 0)
-            elif players[i].Bullet == 1:
-                each_round[i] = random.randint(-2, 1)
-            elif players[i].Bullet >= 2:
-                each_round[i] = random.randint(-2, 2)
-            round_history[i + iteration * 3][count] = each_round[i]
-            if players[i].status == 1 and each_round[i] >= Max:
-                Max = each_round[i]
-            # if players[i].status == 1:
-            print "Player %d: %s" % ((i + 1), moves[each_round[i]+2])
+            if players[i].status == 1:
+                if players[i].Bullet == 0:
+                    each_round[i] = random.randint(-1, 0)
+                elif players[i].Bullet == 1:
+                    each_round[i] = random.randint(-2, 1)
+                elif players[i].Bullet >= 2:
+                    each_round[i] = random.randint(-2, 2)
+                round_history[i + iteration * people][count] = each_round[i]
+                if each_round[i] >= Max:
+                    Max = each_round[i]
+                # if players[i].status == 1:
+                print "Player %d: %s" % ((i + 1), moves[each_round[i] + 2])
         # 结算子弹
-        for i in range(3):
+        for i in range(people):
             if players[i].status == 1:
                 if each_round[i] == 0:
                     players[i].Bullet += 1
@@ -58,23 +110,26 @@ while iteration < num:
                     players[i].Bullet -= 2
                 print "Player %d's bullet: %d" % ((i + 1), players[i].Bullet)
         # 结算结果
-        for i in range(3):
+        for i in range(people):
             if players[i].status == 1:
                 if (each_round[i] + Max) > 0 and each_round[i] != Max:
-                    print "Player %d loss" % (i + 1)
+                    print "Player %d lose" % (i + 1)
                     players[i].status = 0
                     losers += 1
-        if losers == 2:
-            for i in range(3):
+        if losers == (people - 1):
+            for i in range(people):
                 if players[i].status == 1:
                     print "Player %d win" % (i + 1)
                     result[i] = 1
                     print result
-                round_history[i+ iteration * 3][-1] = str(result[i])
+                round_history[i + iteration * people][-1] = str(result[i])
             break
         count += 1
-    for i in range(3):
+    for i in range(people):
         players[i].Bullet = 0
         players[i].status = 1
     iteration += 1
-print np.array(round_history)
+
+
+mytree = createTree(round_history)
+createPlot(mytree)

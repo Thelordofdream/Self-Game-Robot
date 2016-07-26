@@ -1,6 +1,5 @@
 # coding=utf-8
 import matplotlib.pyplot as plt
-import trees
 
 
 decisionNode = dict(boxstyle="sawtooth", fc="0.8")
