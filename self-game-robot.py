@@ -10,6 +10,7 @@ from trees import *
 # BiuBiu = 二级伤害,消耗两颗子弹 2
 # 挡挡 = 能阻挡一级和二级伤害,消耗一颗子弹 -2
 
+
 class player:
     def __init__(self):
         self.Bullet = 0
