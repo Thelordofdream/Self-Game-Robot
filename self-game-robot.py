@@ -2,7 +2,7 @@
 import random
 import numpy as np
 from treePlotter import createPlot
-
+from trees import *
 
 # 吸 = 积累一颗子弹 0
 # Biu = 一级伤害,消耗一颗子弹 1
@@ -17,58 +17,8 @@ class player:
         self.status = 1
 
 
-def splitDataSet(dataSet, value):
-    retDataSet = []
-    for featVec in dataSet:
-        if featVec[0] == value:
-            retDataSet.append(featVec[1:])
-    return retDataSet
-
-
-def get_rate(dataSet):
-    sum = 0
-    count = 0
-    for featVec in dataSet:
-        sum += 1
-        if featVec[-1] == '1':
-            count += 1
-    rate = float(count) / float(sum)
-    return round(rate, 2)
-
-
-def createTree(dataSet):
-    Rate = str(get_rate(dataSet))
-    flag = 0.0
-    count = 0.0
-    for example in dataSet:
-        for i in example[:-1]:
-            count += 1
-            if i != 0:
-                flag += 1
-    if len(dataSet[0]) == 1 or (flag/count) <= 0.01:
-        return Rate
-    myTree = {Rate: {}}
-    featValues = [example[0] for example in dataSet]
-    uniqueVals = set(featValues)
-    for value in uniqueVals:
-        myTree[Rate][value] = createTree(splitDataSet(dataSet, value))
-    return myTree
-
-
-def predict(round_history, mytree, count, want):
-    history = [example for example in round_history[:count]]
-    dict = mytree
-    predict = history[:]
-    predict.append(want)
-    for j in range(count + 1):
-        value = predict[j]
-        key = dict.keys()[0]
-        dict = dict[key][value]
-    return dict.keys()[0]
-
-
 def calculate(x):
-    y = 1.81*(x - 0) * (x - 0.17) - 7.08 * (x - 0) * (x - 1) + 3.92 * (x - 0.17) * (x - 1)
+    y = 2.41 * (x - 0) * (x - 0.17) - 7.08 * (x - 0) * (x - 1) + 2.94 * (x - 0.17) * (x - 1)
     return y
 
 
@@ -96,8 +46,8 @@ player7 = player()
 players = [player1, player2, player3, player4, player5, player6, player7]
 each_round = [0, 0, 0, 0, 0, 0, 0]
 iteration = 0
-num = 50
-round_history = [[0] * 51 for i in range(people * num)]
+num = 200
+round_history = [[0] * 61 for i in range(people * num)]
 
 while iteration < num:
     print "*** Iteration %d ***" % (iteration + 1)
@@ -158,7 +108,7 @@ while iteration < num:
                     players[i].Bullet -= 1
                 elif each_round[i] == 2:
                     players[i].Bullet -= 2
-                print "Player %d's bullet: %d" % ((i + 1), players[i].Bullet)
+                # print "Player %d's bullet: %d" % ((i + 1), players[i].Bullet)
         # 结算结果
         for i in range(people):
             if players[i].status == 1:
@@ -182,4 +132,5 @@ while iteration < num:
     iteration += 1
     mytree = createTree(round_history[:7*iteration])
 
+storeTree(mytree, "Tree.txt")
 createPlot(mytree)
