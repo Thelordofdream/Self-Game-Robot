@@ -8,7 +8,38 @@ from trees import *
 # 挡挡 = 能阻挡一级和二级伤害,消耗一颗子弹 -2
 
 mytree = grabTree('Tree.txt')
-history = [0, -1, 0]
+history = [0, -1, 1, 0, -1, 0]
+round = 1
+move = 0
+rate = float(predict(history, mytree, round - 1, move))
+print round, move, rate
+
 round = 2
-rate =float(predict(history, mytree, round - 1, -2))
-print rate
+move = -1
+rate = float(predict(history, mytree, round - 1, move))
+print round, move, rate
+
+round = 3
+move = 1
+rate = float(predict(history, mytree, round - 1, move))
+print round, move, rate
+
+round = 4
+move = 0
+rate = float(predict(history, mytree, round - 1, move))
+print round, move, rate
+
+round = 5
+move = -1
+rate = float(predict(history, mytree, round - 1, move))
+print round, move, rate
+
+round = 6
+move = 0
+rate = float(predict(history, mytree, round - 1, move))
+print round, move, rate
+
+round = 7
+move = 2
+rate = float(predict(history, mytree, round - 1, move))
+print round, move, rate
